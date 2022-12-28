@@ -51,9 +51,9 @@ if __name__ == '__main__':
     if key:
         fw_gp_users_ext = fw_gp_ext(fw_ip=fw_ip, fw_key=key)
         # print(fw_gp_users_ext)
-        fw_gp_users_sum = fw_gp_lst(fw_gp_users_ext)
+        fw_gp_users_sum = fw_gp_lst(gp_ext=fw_gp_users_ext)
         # print(fw_gp_users_sum)
-        gp_duplicate_lst = fw_gp_duplicates(fw_gp_users_sum, fw_gp_users_ext, csv_path=csv_path,fw_ip=fw_ip, fw_key=key)
+        gp_duplicate_lst = fw_gp_duplicates(gp_lst=fw_gp_users_sum, gp_ext=fw_gp_users_ext, csv_path=csv_path,fw_ip=fw_ip, fw_key=key)
         # Send SoC Email if there was duplicate sessions
         if (gp_duplicate_lst):
             with open("./soc_mail.txt", "r") as soc_mail_body:
