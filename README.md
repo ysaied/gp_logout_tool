@@ -21,4 +21,5 @@ Secrets file to be placed in secure place with below format
 
     
 In main.py, replace the secrets file path, with your secrets file absolute path
+    
     credentials = get_secrets($Secrets_file_absolute_path)
