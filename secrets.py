@@ -5,6 +5,10 @@ import os
 log4y = lambda _: print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + _)
 
 # Function to extract key=value pair from text file and convert to Python Dict
+# secrets file should follow below schema. Whitespaces are allowed before/after '=' sign
+# value=key
+# Username=admin
+# Password = password123
 def get_secrets(file="./secrets.txt"):
     if not os.path.exists(file):
         log4y(f"Secrets File: {file} Not Found")
@@ -18,6 +22,6 @@ def get_secrets(file="./secrets.txt"):
     log4y(f"Secrets File: Extracting Secrets from {file}")
     for _ in list(map(lambda _: _.strip("\n"), secrets_lines)):
         _ = _.split("=")
-        secrets[_[0]] = _[1]
+        secrets[_[0].strip()] = _[1].strip()
     log4y(f"Secrets File: Secrets Ready as Python Dictionary")
     return secrets
