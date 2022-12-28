@@ -44,10 +44,9 @@ if __name__ == '__main__':
     # create the CSV file if not exists
     # insert CVS file header
     csv_path = csv_log(csv_dir=csv_dir)
-    # if not os.path.exists(csv_parm.csv_path):
-    #     with open(csv_parm.csv_path, "a+") as csv_file:
-    #         csv_file.write(csv_parm.csv_header)
 
+    # Retrieve Firewall API Auth-Key from Username/Password
+    # API-Key can be given directly without using Username/Password for enhanced security operation
     key = fw_key(fw_ip=fw_ip, uname=fw_uname, pwd=fw_pwd)
     if key:
         fw_gp_users_ext = fw_gp_ext(fw_ip=fw_ip, fw_key=key)
@@ -67,7 +66,7 @@ if __name__ == '__main__':
                      mail_subject="GlobalProtect Duplicate Sessions Detected",
                      mail_body=mail_body)
     else:
-        log4y(f"Palo Alto NGFW {fw_ip} Not Reachable")
+        log4y(f"PAN-OS API: Palo Alto NGFW {fw_ip} Not Reachable")
 
 # Create Footer
 log4y(f"{'#' * 20}\tGlobalProtect Logout Tool Finished\t{'#' * 20}")
