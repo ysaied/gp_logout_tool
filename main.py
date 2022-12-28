@@ -63,6 +63,7 @@ if __name__ == '__main__':
                      mail_password=mail_password,
                      mail_to=mail_to,
                      mail_srv_port=mail_srv_port,
+                     mail_srv_tls=True,
                      mail_subject="GlobalProtect Duplicate Sessions Detected",
                      mail_body=mail_body)
     else:
