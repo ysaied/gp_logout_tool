@@ -5,6 +5,7 @@ Code files to be copied
     main.py
     pan_fw.py
     soc_mail.py
+    secrets.py
     
 
 Secrets file to be placed in secure place with below format
