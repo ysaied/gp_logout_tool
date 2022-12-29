@@ -1,5 +1,3 @@
-# gp_logout_tool 
-
 Clone the code in you machine in dir $dir_name
 
     git clone https://github.com/ysaied/gp_logout_tool.git $dir_name
@@ -9,7 +7,7 @@ Keep the Code up-to-date
     cd $dir_name
     git pull
 
-Secrets file to be placed in secure place with below format
+Modify the "secrets.txt" file with your system parameters. Move the file to secure place
 
     FW_IP=$FW_IP
     FW_UNAME=$FW_Username
