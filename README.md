@@ -1,12 +1,13 @@
-# gp_logout_tool
+# gp_logout_tool 
 
-Code files to be copied
+Clone the code in you machine in dir $dir_name
 
-    main.py
-    pan_fw.py
-    soc_mail.py
-    secrets.py
-    
+    git clone https://github.com/ysaied/gp_logout_tool.git $dir_name
+
+Keep the Code up-to-date    
+
+    cd $dir_name
+    git pull
 
 Secrets file to be placed in secure place with below format
 
