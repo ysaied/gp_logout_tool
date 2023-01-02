@@ -12,6 +12,7 @@ Modify the "secrets.txt" file with your system parameters. Move the file to secu
     FW_IP=$FW_IP
     FW_UNAME=$FW_Username
     FW_PWD=$FW_Password
+    MAIL_SRV_TYPE=${tls|cleartext}
     MAIL_SRV_URL=$MAIL_Server_IP/URL
     MAIL_SRV_Port=$MAIL_Server_Port
     MAIL_FROM=$MAIL_Account_ID
