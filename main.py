@@ -77,6 +77,8 @@ if __name__ == '__main__':
                                    mail_subject="GlobalProtect Duplicate Sessions Detected",
                                    mail_body=mail_body
                                    )
+            else:
+                log4y("SoC Email: Skip Sending Email to SoC team")
     else:
         log4y(f"PAN-OS API: Palo Alto NGFW {fw_ip} Not Reachable")
 
