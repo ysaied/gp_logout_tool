@@ -5,7 +5,7 @@ import os
 
 from secrets import get_secrets
 from pan_fw import fw_key, fw_gp_ext, fw_gp_lst, fw_gp_duplicates
-from soc_mail import soc_mail
+from soc_mail import soc_mail_tls,soc_mail_cleartext
 
 log4y = lambda _: print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + _)
 ise_gp_del = lambda fw_gp, ise_gp: list(filter(lambda _: _ not in fw_gp, ise_gp))
@@ -32,7 +32,10 @@ fw_ip = credentials["FW_IP"]
 fw_uname = credentials["FW_UNAME"]
 fw_pwd = credentials["FW_PWD"]
 
+# mail server type tls,cleartext
+mail_srv_type = credentials["MAIL_SRV_TYPE"]
 mail_srv_url = credentials["MAIL_SRV_URL"]
+# default mail server port 587 for tls, 25 for cleartext
 mail_srv_port = credentials["MAIL_SRV_Port"]
 mail_from = credentials["MAIL_FROM"]
 mail_password = credentials["MAIL_PWD"]
@@ -58,14 +61,22 @@ if __name__ == '__main__':
         if (gp_duplicate_lst):
             with open("./soc_mail.txt", "r") as soc_mail_body:
                 mail_body = soc_mail_body.read()
-            soc_mail(mail_srv_add=mail_srv_url,
-                     mail_from=mail_from,
-                     mail_password=mail_password,
-                     mail_to=mail_to,
-                     mail_srv_port=mail_srv_port,
-                     mail_srv_tls=True,
-                     mail_subject="GlobalProtect Duplicate Sessions Detected",
-                     mail_body=mail_body)
+            if mail_srv_type == "tls":
+                soc_mail_tls(mail_srv_add=mail_srv_url,
+                         mail_from=mail_from,
+                         mail_password=mail_password,
+                         mail_to=mail_to,
+                         mail_srv_port=mail_srv_port,
+                         mail_subject="GlobalProtect Duplicate Sessions Detected",
+                         mail_body=mail_body)
+            elif mail_srv_type == "cleartext":
+                soc_mail_cleartext(mail_srv_add=mail_srv_url,
+                                   mail_from=mail_from,
+                                   mail_to=mail_to,
+                                   mail_srv_port=mail_srv_port,
+                                   mail_subject="GlobalProtect Duplicate Sessions Detected",
+                                   mail_body=mail_body
+                                   )
     else:
         log4y(f"PAN-OS API: Palo Alto NGFW {fw_ip} Not Reachable")
 
