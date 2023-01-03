@@ -75,3 +75,22 @@ def soc_mail_cleartext(mail_srv_add, mail_from, mail_to, mail_srv_port="25", mai
         log4y(f"SoC Email: Email Sent Successfully")
         mail_server.quit()
         return True
+
+
+def soc_mail(mail_srv_add,
+             mail_from,
+             mail_to, mail_password,
+             mail_srv_port,
+             mail_subject="Subject",
+             mail_body="Body",
+             mail_srv_typ="tls"
+             ):
+    if mail_srv_typ == "tls":
+        log4y(f"SoC Email: TLS/SMTP Email Option Selected")
+        soc_mail_tls(mail_srv_add, mail_from, mail_password, mail_to, mail_srv_port, mail_subject, mail_body)
+    elif mail_srv_typ == "cleartext":
+        log4y(f"SoC Email: Clear-Text SMTP  Email Option Selected")
+        soc_mail_cleartext(mail_srv_add, mail_from, mail_to, mail_srv_port, mail_subject, mail_body)
+    else:
+        log4y(f"SoC Email: Empty or Wrong SMTP  Email Option Selected")
+        log4y(f"SoC Email: Skip Sending Email to SoC team")
