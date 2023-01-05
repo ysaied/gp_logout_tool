@@ -24,6 +24,7 @@ Python dependencies. Python3 MUST be used, below are needed packages
 
     xmltodict
     smtplib
+    prettytable
 
     
 In main.py, replace the secrets file path, with your secrets file absolute path
