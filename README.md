@@ -20,6 +20,10 @@ Modify the "secrets.txt" file with your system parameters. Move the file to secu
     MAIL_TO=$SEN_TO_EMAIL
     CSV_Dir=$CSV_Directory_Path
 
+Python dependencies. Python3 MUST be used, below are needed packages
+    xmltodict
+    smtplib
+
     
 In main.py, replace the secrets file path, with your secrets file absolute path
     
