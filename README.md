@@ -17,16 +17,15 @@ Modify the "secrets.txt" file with your system parameters. Move the file to secu
     MAIL_SRV_Port=$MAIL_Server_Port
     MAIL_FROM=$MAIL_Account_ID
     MAIL_PWD=$MAIL_Account_Password
-    MAIL_TO=$SEN_TO_EMAIL
+    MAIL_TO=$TO_EMAIL
+    MAIL_SUBJECT=$MAIL_Subject
     CSV_Dir=$CSV_Directory_Path
 
-Python dependencies. Python3 MUST be used, below are needed packages
+Python3 MUST be used, below are needed packages
 
     xmltodict
     smtplib
-    prettytable
 
-    
 In main.py, replace the secrets file path, with your secrets file absolute path
     
     credentials = get_secrets($Secrets_file_absolute_path)
