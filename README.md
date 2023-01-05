@@ -21,6 +21,7 @@ Modify the "secrets.txt" file with your system parameters. Move the file to secu
     CSV_Dir=$CSV_Directory_Path
 
 Python dependencies. Python3 MUST be used, below are needed packages
+
     xmltodict
     smtplib
 
