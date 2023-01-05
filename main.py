@@ -5,7 +5,7 @@ import os
 
 from secrets import get_secrets
 from pan_fw import fw_key, fw_gp_ext, fw_gp_lst, fw_gp_duplicates
-from soc_mail import soc_mail
+from soc_mail import soc_mail, soc_mail_body
 
 log4y = lambda _: print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + _)
 ise_gp_del = lambda fw_gp, ise_gp: list(filter(lambda _: _ not in fw_gp, ise_gp))
@@ -40,7 +40,7 @@ mail_srv_port = credentials["MAIL_SRV_Port"]
 mail_from = credentials["MAIL_FROM"]
 mail_password = credentials["MAIL_PWD"]
 mail_to = credentials["MAIL_TO"]
-
+mail_subject = credentials["MAIL_SUBJECT"]
 csv_dir = credentials["CSV_Dir"]
 
 if __name__ == '__main__':
@@ -58,16 +58,18 @@ if __name__ == '__main__':
         # print(fw_gp_users_sum)
         gp_duplicate_lst = fw_gp_duplicates(gp_lst=fw_gp_users_sum, gp_ext=fw_gp_users_ext, csv_path=csv_path,fw_ip=fw_ip, fw_key=key)
         # Send SoC Email if there was duplicate sessions
-        if (gp_duplicate_lst):
-            with open("./soc_mail.txt", "r") as soc_mail_body:
-                mail_body = soc_mail_body.read()
+        if gp_duplicate_lst["GP_DUPLICATE_SUMMARY"]:
+            mail_body = soc_mail_body(
+                gp_duplicate_lst=gp_duplicate_lst["GP_DUPLICATE_SUMMARY"],
+                gp_duplicate_ext=gp_duplicate_lst["GP_DUPLICATE_EXTENDED"]
+            )
             soc_mail(
                 mail_srv_add=mail_srv_url,
                 mail_from=mail_from,
                 mail_password=mail_password,
                 mail_to=mail_to,
                 mail_srv_port=mail_srv_port,
-                mail_subject="GlobalProtect Duplicate Sessions Detected",
+                mail_subject=mail_subject,
                 mail_body=mail_body
             )
     else:

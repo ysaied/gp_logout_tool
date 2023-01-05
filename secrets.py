@@ -22,7 +22,14 @@ def get_secrets(file="./secrets.txt"):
     log4y(f"Secrets File: Extracting Secrets from {file}")
     for _ in list(map(lambda _: _.strip("\n"), secrets_lines)):
         if _:
-            _ = _.split("=")
-            secrets[_[0].strip()] = _[1].strip()
+            if _.startswith("#") : log4y(f"Secrets File: Comment Line Found")
+            else:
+                _ = _.split("=")
+                secrets[_[0].strip()] = _[1].strip()
     log4y(f"Secrets File: Secrets Ready as Python Dictionary")
+    KEYS = str()
+    for _ in secrets:
+        KEYS += f"{_},"
+    KEYS = KEYS.rstrip(",")
+    log4y(f"Secrets File: List of Keys found: {KEYS}")
     return secrets

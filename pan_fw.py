@@ -5,13 +5,8 @@ import requests
 import xmltodict
 import os
 
-from soc_mail import mail_header,mail_trailer,mail_section_1
-
 requests.packages.urllib3.disable_warnings()
 log4y = lambda _: print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + _)
-
-
-# csv_4y = with open("./text.csv", "w") as csv_file: csv_file.write(_)
 
 
 def fw_key(fw_ip, uname, pwd):
@@ -130,25 +125,69 @@ def fw_gp_gw_id(fw_ip, fw_key):
     return False
 
 
-def fw_gp_duplicates(gp_lst, gp_ext, fw_ip, fw_key,csv_path):
+def gp_user_logout(fw_ip, fw_key, username, computer, gateway_name):
+    # function to force GP User logout via PAN-OS API
+    # GP logout is forced by username and computer name i.e. hostname
+    # GP Gateway name is needed, and taken from other function fw_gp_gw_id
+    api_url = f"https://{fw_ip}/api"
+    cmd = f"""
+    <request>
+        <global-protect-gateway>
+            <client-logout>
+                <user>{username}</user>
+                <computer>{computer}</computer>
+                <reason>force-logout</reason>
+                <gateway>{gateway_name}</gateway>
+            </client-logout>
+        </global-protect-gateway>
+    </request>
+    """
+    # print(cmd)
+    api_prm = {
+        "key": fw_key,
+        "type": "op",
+        "cmd": cmd
+    }
+    api_hdr = {}
+    api_pld = {}
+    try:
+        log4y(f"PAN-OS API: Request GP-Gateway Disconnect User - user:{username} Host:{computer}, Firewall {fw_ip}")
+        response = requests.request("GET", url=api_url, params=api_prm, verify=False, timeout=3)
+    except:
+        log4y(f"PAN-OS API: GP-Gateway Disconnect User Failure - user:{username} Host:{computer}, Firewall:{fw_ip}")
+        raise ValueError(f"PAN-OS API: Connection Failure, Firewall {fw_ip} Unreachable")
+    else:
+        if "success" in response.text:
+            log4y(
+                f"PAN-OS API: GP-Gateway Disconnect User Successful - user:{username} Host:{computer}, Firewall {fw_ip}")
+        else:
+            log4y(
+                f"PAN-OS API: PAN-OS API: GP-Gateway Disconnect User Failure - user:{username} Host:{computer}, Firewall:{fw_ip}")
+            log4y(f"PAN-OS API: {response.text}")
+
+
+def fw_gp_duplicates(gp_lst, gp_ext, fw_ip, fw_key, csv_path):
+    # function to find out Duplicate GP sessions. Inputs are GP connected Users summary list and extended details list
+    # Users summary set remove duplicate users from summary list
     gp_set = set(gp_lst)
+    # Define new list that will hold duplicate Users summary
     gp_duplicate_lst = []
     for _ in gp_set:
         log4y(f"PAN-OS API: User {_} has {gp_lst.count(_)} Active GP Sessions") if gp_lst.count(_) > 1 else None
         gp_duplicate_lst.append(_) if gp_lst.count(_) > 1 else None
 
+    # Get GP Gateway Name by calling fw_gp_gw_id function
     gateway_name = fw_gp_gw_id(fw_ip=fw_ip, fw_key=fw_key)
-
-    # create tmp file for the email to SoC
-    with open("./soc_mail.txt", "w") as soc_mail_body:
-        soc_mail_body.write(mail_header)
-        [soc_mail_body.write(f"{_}\n") for _ in gp_duplicate_lst]
-        soc_mail_body.write(mail_section_1)
-
+    # Define new list that will hold duplicate Users extended details
+    gp_duplicate_ext = []
+    # Loop for each User in the Duplicate Summary List
     for _ in gp_duplicate_lst:
+        # Define Key/Value that holds connection_duration:hostname for each active connection for that user
         disconnection_table = dict()
+        # Search for duplicate user name in the GP extended details list
         for entry in gp_ext:
             if _ == entry["Username"]:
+                gp_duplicate_ext.append(entry)
                 disconnection_table[entry["Duration-Connected"]] = entry["Client-Hostname"]
                 csv_entry = f'{datetime.datetime.now().strftime("%Y%m%d%H%M")},' \
                             f'{entry["Username"]},' \
@@ -161,10 +200,6 @@ def fw_gp_duplicates(gp_lst, gp_ext, fw_ip, fw_key,csv_path):
                             f'\n'
                 with open(csv_path, "a+") as csv_file:
                     csv_file.write(csv_entry)
-
-                with open("./soc_mail.txt", "a+") as soc_mail_body:
-                    soc_mail_body.write(csv_entry)
-
         # reverse = True for Descending Order .. i.e. place the higher connection-duration at the top
         disconnection_lst = sorted(disconnection_table.items(), reverse=True)
         # remove the first element on the list .. remove the session with higher connection-duration
@@ -172,41 +207,10 @@ def fw_gp_duplicates(gp_lst, gp_ext, fw_ip, fw_key,csv_path):
         disconnection_table = dict(disconnection_lst)
 
         for key, value in disconnection_table.items():
-            cmd = f"""
-            <request>
-                <global-protect-gateway>
-                    <client-logout>
-                        <user>{_}</user>
-                        <computer>{value}</computer>
-                        <reason>force-logout</reason>
-                        <gateway>{gateway_name}</gateway>
-                    </client-logout>
-                </global-protect-gateway>
-            </request>
-            """
-            # print(cmd)
-            api_url = f"https://{fw_ip}/api"
-            api_prm = {
-                "key": fw_key,
-                "type": "op",
-                "cmd": cmd
-            }
-            api_hdr = {}
-            api_pld = {}
-            try:
-                log4y(f"PAN-OS API: Request GP-Gateway Disconnect User {_} Host {value}, Firewall {fw_ip}")
-                response = requests.request("GET", url=api_url, params=api_prm, verify=False, timeout=3)
-            except:
-                log4y(f"PAN-OS API: Connection Failure, Firewall {fw_ip} Unreachable")
-            else:
-                if "success" in response.text:
-                    log4y(
-                        f"PAN-OS API: GP Session for User {_} Host {value} Disconnected Successfully, Firewall {fw_ip}")
-                else:
-                    log4y(f"PAN-OS API: GP Session for User {_} Host {value} Disconnection Failure, Firewall {fw_ip}")
+            gp_user_logout(fw_ip=fw_ip, fw_key=fw_key, username=_, computer=value, gateway_name=gateway_name)
 
-    with open("./soc_mail.txt", "a+") as soc_mail_body:
-        soc_mail_body.write(mail_trailer)
-
-    return gp_duplicate_lst
-
+    result = {
+        "GP_DUPLICATE_SUMMARY": gp_duplicate_lst,
+        "GP_DUPLICATE_EXTENDED": gp_duplicate_ext
+    }
+    return result
