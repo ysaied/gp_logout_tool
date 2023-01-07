@@ -25,6 +25,8 @@ Python3 MUST be used, below are needed packages
 
     xmltodict
     smtplib
+    jinja2
+    flask
 
 In main.py, replace the secrets file path, with your secrets file absolute path
     
