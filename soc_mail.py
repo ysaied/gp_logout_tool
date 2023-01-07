@@ -4,11 +4,13 @@ import datetime
 # from prettytable import PrettyTable
 
 log4y = lambda _: print(datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S") + " " + _)
+uri = datetime.datetime.now().strftime("%Y%m%d%H%M")
 
 mail_header = "Dear SoC Team;\n" \
               "Palo Alto Networks GlobalProtect Single Concurrent User Session Automation Tool has discovered duplicated sessions for below user accounts.\n\n"
 
-mail_section_1 = "\nBelow details for users with duplicate sessions\n\n"
+mail_section_1 = f"\nClick in this URL for details http://127.0.0.1:8000/{uri}.\n" \
+                 "Below details for users with duplicate sessions\n\n"
 
 mail_trailer = "\nDuplicate sessions has been logout, only the first user session is kept-connected\n" \
                "\nRegards;\n" \

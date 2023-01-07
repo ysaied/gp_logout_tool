@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href={{ "{{ url_for('static', filename='styles.css') }}" }}>
+</head>
+<body>
+  <div>
+      <ul>{% for file in files %} {% if "20" in file %}
+          <li><a href="{{ http_server }}/{{ file[:-5] }}" target="_blank">{{ file[:-5] }}</a></li>
+          {% endif %} {% endfor %}
+      </ul>
+  </div>
+
+</body>
+</html>

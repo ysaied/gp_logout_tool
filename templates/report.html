@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href={{ "{{ url_for('static', filename='styles.css') }}" }}>
+</head>
+<body>
+    <h2>{{page_heading}}</h2>
+    <p>
+        GP-Logout-Tool executed at {{ time_now }} and discovered duplicated sessions for below user accounts.
+        <br>
+    </p>
+    <div>
+        <table class="summary">
+            <thead>
+            <tr><td>Username</td>
+            </tr>
+            </thead>
+            {% for user in users_lst %}<tr><td>{{ user }}</td></tr>{% endfor%}
+        </table>
+    </div>
+    <hr>
+    <p>Below details for users with duplicate sessions<br></p>
+    <div>
+        <table>
+            <thead>
+            <tr>
+                {% for key,value in users_ext[0].items() %}<td>{{ key }}</td>{% endfor %}
+            </tr>
+            </thead>
+            {% for row in users_ext %}
+            <tr>{% for key,value in row.items() %}<td>{{ value }}</td>{% endfor %}</tr>
+            {% endfor %}
+        </table>
+    </div>
+    <hr>
+    <p>Duplicate sessions has been logout, only the first user session is kept-connected<br></p>
+</body>
+</html>
