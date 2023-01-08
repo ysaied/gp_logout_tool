@@ -31,3 +31,10 @@ Python3 MUST be used, below are needed packages
 In main.py, replace the secrets file path, with your secrets file absolute path
     
     credentials = get_secrets($Secrets_file_absolute_path)
+    
+The tool has optional WEB Page using Flask, Port 8000 is used and could be edited 
+
+    portal.py
+
+
+
